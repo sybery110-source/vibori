@@ -34,7 +34,7 @@ window.advisorPhotos = {
     // 'er_3': 'photos/golovin.jpg',       // Владислав Головин
 
     /* --- КПРФ --- */
-    // 'kprf_1': 'photos/bondarenko.jpg',  // Николай Бондаренко
+     'kprf_1': 'photos/bondarenko.png',  // Николай Бондаренко
     // 'kprf_2': 'photos/afonin.jpg',      // Юрий Афонин
     // 'kprf_3': 'photos/anidalov.jpg',    // Александр Анидалов
 
