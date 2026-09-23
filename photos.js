@@ -9,7 +9,7 @@
    ============================================ */
 const partyPhotos = {
     // 'er': 'logos/er.png',
-    'kprf': 'logos/kprf.png',
+    'kprf': 'vibori/logos/kprf.png',
     // 'ldpr': 'logos/ldpr.png',
     // 'sr': 'logos/sr.png',
     // 'nl': 'logos/nl.png',
