@@ -9,7 +9,7 @@
 
 // Глобальные объекты (объявляются ТОЛЬКО здесь, в HTML их нет)
 window.partyPhotos = {
-    // 'er': 'logos/er.png',
+     'er': 'logos/edro.png',
     'kprf': 'logos/kprf.png',
     // 'ldpr': 'logos/ldpr.png',
     // 'sr': 'logos/sr.png',
