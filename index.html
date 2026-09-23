@@ -6,45 +6,42 @@
 <title>Выборы 2026 — Штаб кампании</title>
 <style>
 :root {
-    --accent: #4f8ff7;
-    --accent-2: #a78bfa;
-    --accent-soft: #131c30;
-    --bg: #05070f;
-    --bg-2: #0a0e1a;
-    --card: #0f1626;
-    --card-2: #131c30;
-    --text: #eaf1ff;
-    --muted: #8b9bb8;
-    --border: #1f2a44;
-    --border-strong: #ffffff;
-    --radius: 16px;
-    --radius-sm: 12px;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,.55);
-    --shadow-md: 0 6px 20px rgba(0,0,0,.65);
-    --shadow-lg: 0 14px 40px rgba(0,0,0,.75);
-    --grad: linear-gradient(135deg,#4f8ff7,#a78bfa);
-    --green: #4ade80;
-    --red: #f87171;
-    --orange: #fbbf24;
-    --purple: #a78bfa;
-}
-body.light-theme {
+    --accent: #0066cc;
+    --accent-2: #8e44ad;
     --accent-soft: #eaf3ff;
     --bg: #f0f6ff;
     --bg-2: #e6f0ff;
     --card: #ffffff;
-    --card-2: #ffffff;
     --text: #1a2233;
     --muted: #6b7a90;
     --border: #cfe0f5;
     --border-strong: #0066cc;
+    --radius: 16px;
+    --radius-sm: 12px;
     --shadow-sm: 0 2px 8px rgba(0,102,204,.08);
     --shadow-md: 0 6px 20px rgba(0,102,204,.12);
     --shadow-lg: 0 14px 40px rgba(0,102,204,.18);
+    --grad: linear-gradient(135deg,#0066cc,#8e44ad);
     --green: #16a34a;
     --red: #dc2626;
     --orange: #d97706;
     --purple: #8e44ad;
+}
+body.dark-theme {
+    --accent-soft: #16233d;
+    --bg: #0d1526;
+    --bg-2: #111c33;
+    --card: #18233d;
+    --text: #eaf1ff;
+    --muted: #92a3bd;
+    --border: #2a3a5c;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.35);
+    --shadow-md: 0 6px 20px rgba(0,0,0,.45);
+    --shadow-lg: 0 14px 40px rgba(0,0,0,.55);
+    --green: #4ade80;
+    --red: #f87171;
+    --orange: #fbbf24;
+    --purple: #a78bfa;
 }
 * {
     margin: 0; padding: 0; box-sizing: border-box;
@@ -75,7 +72,7 @@ h1 {
 .theme-toggle {
     position: fixed; top: 16px; right: 16px;
     width: 52px; height: 52px; border-radius: 50%;
-    border: 2px solid #ffffff;
+    border: 2px solid var(--border-strong);
     background: var(--card); color: var(--accent);
     font-size: 1.4rem; cursor: pointer;
     display: grid; place-items: center;
@@ -84,37 +81,34 @@ h1 {
 }
 .content-block {
     background: var(--card);
-    border: 2px solid #ffffff;
+    border: 2px solid var(--border-strong);
     border-radius: var(--radius);
     padding: 22px 18px;
     box-shadow: var(--shadow-sm);
 }
 .content-block h2 {
-    color: #ffffff; text-align: center;
+    color: var(--accent); text-align: center;
     margin-bottom: 18px; font-size: 1.5rem; font-weight: 800;
 }
-/* Карточка партии в главном меню — белая рамка */
 .party-card {
     background: var(--card);
-    border: 2px solid #ffffff;
+    border: 2px solid var(--border-strong);
     border-radius: var(--radius);
     padding: 18px 16px; margin-bottom: 14px;
     box-shadow: var(--shadow-sm);
     cursor: pointer;
     display: flex; align-items: center; gap: 14px;
-    transition: transform .15s ease, box-shadow .15s ease;
 }
-.party-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
 .party-flag {
     width: 64px; height: 64px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-weight: 900; font-size: 1.1rem;
-    flex-shrink: 0; border: 2px solid #ffffff;
+    flex-shrink: 0; border: 2px solid var(--border);
     overflow: hidden;
 }
 .party-flag img {
     width: 100%; height: 100%;
-    object-fit: contain; padding: 0; display: block;
+    object-fit: cover; padding: 0; display: block;
 }
 .party-info { flex: 1; min-width: 0; }
 .party-info h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
@@ -168,7 +162,7 @@ h1 {
 }
 .region-card.owned {
     border-color: var(--green);
-    background: linear-gradient(135deg, rgba(74,222,128,.06), var(--card));
+    background: linear-gradient(135deg, rgba(22,163,74,.06), var(--card));
 }
 .region-header {
     display: flex; justify-content: space-between;
@@ -271,7 +265,7 @@ h1 {
 }
 .advisor-card.hired {
     border-color: var(--green);
-    background: linear-gradient(135deg, rgba(74,222,128,.06), var(--card));
+    background: linear-gradient(135deg, rgba(22,163,74,.06), var(--card));
 }
 .advisor-card.removed { opacity: .55; border-color: var(--red); }
 .advisor-photo {
@@ -305,8 +299,8 @@ h1 {
 }
 .chronicle-item.good { border-left-color: var(--green); }
 .chronicle-item.bad { border-left-color: var(--red); }
-.chronicle-item.news { border-left-color: var(--orange); background: linear-gradient(90deg, rgba(251,191,36,.06), var(--card)); }
-.chronicle-item.court { border-left-color: var(--purple); background: linear-gradient(90deg, rgba(167,139,250,.06), var(--card)); }
+.chronicle-item.news { border-left-color: var(--orange); background: linear-gradient(90deg, rgba(217,119,6,.06), var(--card)); }
+.chronicle-item.court { border-left-color: var(--purple); background: linear-gradient(90deg, rgba(142,68,173,.06), var(--card)); }
 .chronicle-day { font-weight: 800; color: var(--accent-2); flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .chronicle-text { color: var(--muted); line-height: 1.4; }
 .btn-primary {
@@ -314,13 +308,13 @@ h1 {
     border: none; background: var(--grad); color: #fff;
     font-size: 1.05rem; font-weight: 800;
     cursor: pointer; font-family: inherit;
-    box-shadow: 0 6px 20px rgba(79,143,247,.35);
+    box-shadow: 0 6px 20px rgba(0,102,204,.3);
     min-height: 56px; letter-spacing: 1px; text-transform: uppercase;
 }
 .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
 .modal-overlay {
     position: fixed; inset: 0;
-    background: rgba(2,4,8,.85);
+    background: rgba(10,15,30,.75);
     backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
     display: none; align-items: center; justify-content: center;
     z-index: 1000; padding: 18px;
@@ -435,12 +429,12 @@ h1 {
     margin: 0 auto 14px;
     display: flex; align-items: center; justify-content: center;
     font-weight: 900; color: #fff; font-size: 1.4rem;
-    border: 3px solid #ffffff;
+    border: 3px solid var(--border-strong);
     overflow: hidden;
 }
 .brief-flag img {
     width: 100%; height: 100%;
-    object-fit: contain; padding: 0; display: block;
+    object-fit: cover; padding: 0; display: block;
 }
 .brief-title { font-size: 1.5rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
 .brief-sub { color: var(--muted); font-size: .92rem; }
@@ -486,12 +480,12 @@ h1 {
     width: 72px; height: 72px; border-radius: 16px;
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-weight: 900; font-size: 1.3rem;
-    flex-shrink: 0; border: 2px solid #ffffff;
+    flex-shrink: 0; border: 2px solid var(--border);
     overflow: hidden;
 }
 .party-info-flag img {
     width: 100%; height: 100%;
-    object-fit: contain; padding: 0; display: block;
+    object-fit: contain; padding: 6px; display: block;
 }
 .party-info-title h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
 .party-info-title .party-style { font-size: .85rem; color: var(--muted); }
@@ -607,7 +601,7 @@ h1 {
 }
 .count-candidate.me {
     border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(79,143,247,.25);
+    box-shadow: 0 0 0 2px rgba(0,102,204,.15);
 }
 .count-candidate-head {
     display: flex; justify-content: space-between;
@@ -680,7 +674,7 @@ h1 {
 </head>
 <body>
 
-<button class="theme-toggle" id="theme-toggle">☀️</button>
+<button class="theme-toggle" id="theme-toggle">🌙</button>
 
 <div class="container">
     <header>
@@ -770,12 +764,19 @@ h1 {
     </div>
 </div>
 
+<!-- photos.js подключается ДО основного скрипта,
+     чтобы объекты с фото были уже заполнены -->
 <script src="photos.js"></script>
 
 <script>
 /* ============================================
    ХЕЛПЕРЫ ДЛЯ ФОТО
+   ============================================
+   Сами объекты advisorPhotos, eventPhotos, partyPhotos
+   объявлены в photos.js и заполняются там же.
+   Здесь только функции-обёртки.
    ============================================ */
+
 function getEventPhotoHtml(eventId) {
     const photo = (typeof eventPhotos !== 'undefined' && (eventPhotos[eventId] || eventPhotos['default'])) || null;
     if (photo) {
@@ -783,6 +784,7 @@ function getEventPhotoHtml(eventId) {
     }
     return `<div class="event-photo"><div class="event-photo-placeholder">📰</div></div>`;
 }
+
 function getAdvisorPhotoHtml(advisor) {
     const photo = (typeof advisorPhotos !== 'undefined') ? advisorPhotos[advisor.id] : null;
     const initial = advisor.name.charAt(0);
@@ -791,6 +793,7 @@ function getAdvisorPhotoHtml(advisor) {
     }
     return initial;
 }
+
 function getPartyPhotoHtml(party) {
     const photo = (typeof partyPhotos !== 'undefined') ? partyPhotos[party.id] : null;
     if (photo) {
@@ -815,7 +818,7 @@ const MACRO_REGIONS = [
 const PARTIES = [
     {
         id: 'er', name: 'Единая Россия', leader: 'Д. Медведев', style: 'Аппаратная',
-        color: '#3b82f6', colorDark: '#1e3a8a', colorBright: '#93c5fd', colorSoft: '#132a52',
+        color: '#2563eb', colorDark: '#1e3a8a', colorBright: '#60a5fa', colorSoft: '#eaf3ff',
         flag: 'ЕР', base: 24, difficulty: 2,
         desc: 'Партия власти. Реальная поддержка низкая, но есть админресурс.',
         traits: { trustStart: 32 },
@@ -835,7 +838,7 @@ const PARTIES = [
     },
     {
         id: 'kprf', name: 'КПРФ', leader: 'Г. Зюганов', style: 'Трибунная',
-        color: '#ef4444', colorDark: '#7f1d1d', colorBright: '#fca5a5', colorSoft: '#2a1313',
+        color: '#dc2626', colorDark: '#7f1d1d', colorBright: '#f87171', colorSoft: '#fef0f0',
         flag: 'КПРФ', base: 17, difficulty: 3,
         desc: 'Системная оппозиция. Сильна в промзонах и аграрных регионах.',
         traits: { trustStart: 30 },
@@ -855,7 +858,7 @@ const PARTIES = [
     },
     {
         id: 'ldpr', name: 'ЛДПР', leader: 'Л. Слуцкий', style: 'Эпатажная',
-        color: '#3b82f6', colorDark: '#1e3a8a', colorBright: '#93c5fd', colorSoft: '#132a52',
+        color: '#1e40af', colorDark: '#004dab', colorBright: '#93c5fd', colorSoft: '#eef4fe',
         flag: 'ЛДПР', base: 11, difficulty: 2,
         desc: 'Партия ярких жестов и медийных скандалов.',
         traits: { trustStart: 28 },
@@ -875,7 +878,7 @@ const PARTIES = [
     },
     {
         id: 'sr', name: 'Справедливая Россия', leader: 'С. Миронов', style: 'Социальная',
-        color: '#f59e0b', colorDark: '#78350f', colorBright: '#fcd34d', colorSoft: '#2a1f0a',
+        color: '#d97706', colorDark: '#92400e', colorBright: '#fbbf24', colorSoft: '#fef6e7',
         flag: 'СР', base: 8, difficulty: 3,
         desc: 'Социалка, бюджетники, пенсионеры.',
         traits: { trustStart: 30 },
@@ -895,7 +898,7 @@ const PARTIES = [
     },
     {
         id: 'nl', name: 'Новые люди', leader: 'А. Нечаев', style: 'Молодёжная',
-        color: '#10b981', colorDark: '#064e3b', colorBright: '#6ee7b7', colorSoft: '#0d2b24',
+        color: '#059669', colorDark: '#064e3b', colorBright: '#34d399', colorSoft: '#e8f7f1',
         flag: 'НЛ', base: 8, difficulty: 2,
         desc: 'Партия молодых. Digital-кампания.',
         traits: { trustStart: 30 },
@@ -915,7 +918,7 @@ const PARTIES = [
     },
     {
         id: 'pens', name: 'Партия пенсионеров', leader: 'Э. Праздников', style: 'Стабильная',
-        color: '#a855f7', colorDark: '#4c1d95', colorBright: '#d8b4fe', colorSoft: '#241640',
+        color: '#8e44ad', colorDark: '#4c1d95', colorBright: '#a78bfa', colorSoft: '#f5eaff',
         flag: 'ПП', base: 4, difficulty: 4,
         desc: 'Одна тема — пенсии.',
         traits: { trustStart: 38 },
@@ -935,7 +938,7 @@ const PARTIES = [
     },
     {
         id: 'kr', name: 'Коммунисты России', leader: 'С. Малинкович', style: 'Спойлерская',
-        color: '#dc2626', colorDark: '#7f1d1d', colorBright: '#fca5a5', colorSoft: '#2a1313',
+        color: '#b91c1c', colorDark: '#7f1d1d', colorBright: '#fca5a5', colorSoft: '#fdecec',
         flag: 'КР', base: 3, difficulty: 5,
         desc: 'Спойлер КПРФ. Ресурсов нет — есть идея.',
         traits: { trustStart: 25 },
@@ -955,7 +958,7 @@ const PARTIES = [
     },
     {
         id: 'yabloko', name: 'Яблоко', leader: 'Н. Рыбаков', style: 'Либеральная',
-        color: '#22c55e', colorDark: '#064e3b', colorBright: '#86efac', colorSoft: '#0d2b1c',
+        color: '#16a34a', colorDark: '#064e3b', colorBright: '#22c55e', colorSoft: '#e8f7f1',
         flag: 'ЯБ', base: 5, difficulty: 4,
         desc: 'Либеральная оппозиция. Риск снятия при высокой поддержке.',
         traits: { trustStart: 30 },
@@ -1101,7 +1104,6 @@ function selectParty(p) {
     $('brief-flag').innerHTML = getPartyPhotoHtml(p);
     $('brief-flag').style.background = `linear-gradient(135deg,${p.colorDark},${p.color})`;
     $('brief-title').textContent = p.name;
-    $('brief-title').style.color = p.color;
     $('brief-sub').textContent = `Лидер: ${p.leader} · ${p.style}`;
     $('brief-body').innerHTML = p.welcome.map(t => `<p>${t}</p>`).join('') +
         `<p class="brief-sign">— ${p.leader}</p>`;
@@ -1291,7 +1293,7 @@ function renderRegions() {
             </div>
             <div class="region-tags">
                 ${r.tags.map(t => `<span class="region-tag">${t}</span>`).join('')}
-                ${owned ? '<span class="region-tag" style="background:rgba(74,222,128,.15);color:var(--green)">✓ наш</span>' : ''}
+                ${owned ? '<span class="region-tag" style="background:rgba(22,163,74,.15);color:var(--green)">✓ наш</span>' : ''}
             </div>
         `;
         grid.appendChild(card);
@@ -1508,6 +1510,7 @@ function getAvailableOrders() {
             available.push(ADVISOR_ORDERS[adv.unlock]);
         }
     });
+    // Игрок за ЕР НЕ получает бесплатный приказ на фальсификацию.
     return available;
 }
 
@@ -2326,7 +2329,7 @@ function renderStaff() {
         card.className = 'advisor-card' + (isHired ? ' hired' : '') + (isRemoved ? ' removed' : '');
         const photoHtml = getAdvisorPhotoHtml(adv);
         card.innerHTML = `
-            <div class="advisor-photo" ${isRemoved ? 'style="background:#7f1d1d;color:var(--red)"' : ''}>${photoHtml}</div>
+            <div class="advisor-photo" ${isRemoved ? 'style="background:#fee2e2;color:var(--red)"' : ''}>${photoHtml}</div>
             <div class="advisor-info">
                 <div class="advisor-name">${adv.name}${isRemoved ? ' <span style="color:var(--red);font-size:.8rem">(СНЯТ)</span>' : ''}</div>
                 <div class="advisor-role">${adv.role}</div>
@@ -2973,11 +2976,13 @@ function startCounting() {
 
     let myFinal = finalResults.reduce((sum, fr) => sum + fr.realMe * fr.region.weight, 0) / totalWeight;
 
+    // ===== ИЗМЕНЕНИЕ: НПС ЕР получает строго +10..15 п.п., без других баффов =====
     if (oppReal['er'] !== undefined) {
         const erFraudBonus = rand(10, 15);
         oppReal['er'] += erFraudBonus * totalWeight;
     }
 
+    // ===== ИЗМЕНЕНИЕ: игрок за ЕР получает только заработанные очки =====
     let fraudBonus = 0;
     if (state.party.id === 'er' && state.fraudPoints > 0) {
         fraudBonus = state.fraudPoints * 0.8;
@@ -3225,21 +3230,15 @@ function renderAll() {
     renderLog();
 }
 
-/* ============================================
-   ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ
-   ============================================ */
 const themeBtn = $('theme-toggle');
-document.body.classList.remove('light-theme');
-themeBtn.textContent = '☀️';
-if (localStorage.getItem('theme') === 'light') {
-    document.body.classList.add('light-theme');
-    themeBtn.textContent = '🌙';
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-theme');
+    themeBtn.textContent = '☀️';
 }
 themeBtn.addEventListener('click', () => {
-    document.body.classList.toggle('light-theme');
-    const isLight = document.body.classList.contains('light-theme');
-    themeBtn.textContent = isLight ? '🌙' : '☀️';
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    document.body.classList.toggle('dark-theme');
+    themeBtn.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+    localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
     if (state.party) applyPartyTheme(state.party);
 });
 
