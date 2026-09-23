@@ -6,9 +6,6 @@
 <title>Выборы 2026 — Штаб кампании</title>
 <style>
 :root {
-    --accent: #4f8ff7;
-    --accent-2: #a78bfa;
-    --accent-soft: #131c30;
     --bg: #05070f;
     --bg-2: #0a0e1a;
     --card: #0f1626;
@@ -17,6 +14,9 @@
     --muted: #8b9bb8;
     --border: #1f2a44;
     --border-strong: #ffffff;
+    --accent: #4f8ff7;
+    --accent-2: #a78bfa;
+    --accent-soft: #131c30;
     --radius: 16px;
     --radius-sm: 12px;
     --shadow-sm: 0 2px 8px rgba(0,0,0,.55);
@@ -29,7 +29,6 @@
     --purple: #a78bfa;
 }
 body.light-theme {
-    --accent-soft: #eaf3ff;
     --bg: #f0f6ff;
     --bg-2: #e6f0ff;
     --card: #ffffff;
@@ -37,7 +36,8 @@ body.light-theme {
     --text: #1a2233;
     --muted: #6b7a90;
     --border: #cfe0f5;
-    --border-strong: #0066cc;
+    --border-strong: #000000;
+    --accent-soft: #eaf3ff;
     --shadow-sm: 0 2px 8px rgba(0,102,204,.08);
     --shadow-md: 0 6px 20px rgba(0,102,204,.12);
     --shadow-lg: 0 14px 40px rgba(0,102,204,.18);
@@ -59,6 +59,7 @@ body {
     transition: background .35s ease, color .35s ease;
     font-size: 16px;
 }
+body.intro-locked { overflow: hidden; }
 .container { max-width: 900px; margin: 0 auto; padding: 18px; }
 .page { display: none; }
 .page.active { display: block; }
@@ -75,53 +76,61 @@ h1 {
 .theme-toggle {
     position: fixed; top: 16px; right: 16px;
     width: 52px; height: 52px; border-radius: 50%;
-    border: 2px solid #ffffff;
-    background: var(--card); color: var(--accent);
+    border: 2px solid var(--border-strong);
+    background: var(--card); color: var(--text);
     font-size: 1.4rem; cursor: pointer;
     display: grid; place-items: center;
     box-shadow: var(--shadow-md);
     z-index: 100;
+    transition: background .35s ease, color .35s ease, border-color .35s ease;
 }
 .content-block {
     background: var(--card);
-    border: 2px solid #ffffff;
+    border: 2px solid var(--border-strong);
     border-radius: var(--radius);
     padding: 22px 18px;
     box-shadow: var(--shadow-sm);
 }
 .content-block h2 {
-    color: #ffffff; text-align: center;
+    color: var(--text); text-align: center;
     margin-bottom: 18px; font-size: 1.5rem; font-weight: 800;
 }
-/* Карточка партии в главном меню — белая рамка */
+/* Карточка партии — изюминка: цветная левая полоса + цветной флаг */
 .party-card {
+    position: relative;
     background: var(--card);
-    border: 2px solid #ffffff;
+    border: 2px solid var(--border-strong);
     border-radius: var(--radius);
-    padding: 18px 16px; margin-bottom: 14px;
+    padding: 18px 16px 18px 22px;
+    margin-bottom: 14px;
     box-shadow: var(--shadow-sm);
     cursor: pointer;
     display: flex; align-items: center; gap: 14px;
     transition: transform .15s ease, box-shadow .15s ease;
+    overflow: hidden;
+}
+.party-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 8px;
+    background: var(--party-color, var(--accent));
 }
 .party-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
 .party-flag {
     width: 64px; height: 64px; border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-weight: 900; font-size: 1.1rem;
-    flex-shrink: 0; border: 2px solid #ffffff;
+    flex-shrink: 0; border: 2px solid var(--border-strong);
     overflow: hidden;
 }
-.party-flag img {
-    width: 100%; height: 100%;
-    object-fit: contain; padding: 0; display: block;
-}
+.party-flag img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .party-info { flex: 1; min-width: 0; }
 .party-info h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
 .party-info .party-leader { font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
 .party-info .party-desc { font-size: .85rem; color: var(--muted); line-height: 1.4; }
 .party-stats { text-align: right; flex-shrink: 0; }
-.party-stats .stat-start { color: var(--accent); font-weight: 900; font-size: 1.2rem; }
+.party-stats .stat-start { font-weight: 900; font-size: 1.2rem; }
 .party-stats .stat-label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 .party-stats .stat-difficulty { color: var(--orange); font-size: .9rem; letter-spacing: 2px; margin-top: 4px; }
 .hud {
@@ -198,9 +207,7 @@ h1 {
     height: 8px; background: var(--accent-soft);
     border-radius: 999px; overflow: hidden;
 }
-.region-party-fill {
-    height: 100%; border-radius: 999px;
-}
+.region-party-fill { height: 100%; border-radius: 999px; }
 .region-party-pct {
     font-weight: 800; font-variant-numeric: tabular-nums;
     text-align: right; font-size: .85rem;
@@ -325,6 +332,7 @@ h1 {
     display: none; align-items: center; justify-content: center;
     z-index: 1000; padding: 18px;
 }
+body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
 .modal-overlay.active { display: flex; }
 .modal {
     background: var(--card);
@@ -438,11 +446,8 @@ h1 {
     border: 3px solid #ffffff;
     overflow: hidden;
 }
-.brief-flag img {
-    width: 100%; height: 100%;
-    object-fit: contain; padding: 0; display: block;
-}
-.brief-title { font-size: 1.5rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+.brief-flag img { width: 100%; height: 100%; object-fit: contain; padding: 0; display: block; }
+.brief-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
 .brief-sub { color: var(--muted); font-size: .92rem; }
 .brief-body { line-height: 1.7; color: var(--text); margin-bottom: 20px; }
 .brief-body p { margin-bottom: 12px; }
@@ -489,10 +494,7 @@ h1 {
     flex-shrink: 0; border: 2px solid #ffffff;
     overflow: hidden;
 }
-.party-info-flag img {
-    width: 100%; height: 100%;
-    object-fit: contain; padding: 0; display: block;
-}
+.party-info-flag img { width: 100%; height: 100%; object-fit: contain; padding: 0; display: block; }
 .party-info-title h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
 .party-info-title .party-style { font-size: .85rem; color: var(--muted); }
 .party-info-row {
@@ -663,9 +665,80 @@ h1 {
     0% { opacity: 1; transform: translateY(0) scale(1); }
     100% { opacity: 0; transform: translateY(-180px) scale(.4); }
 }
+
+/* ====== ИНТРО-АНИМАЦИЯ ====== */
+#intro-screen {
+    position: fixed; inset: 0;
+    background: #000000;
+    z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    transition: transform 0.9s cubic-bezier(.77,0,.18,1), opacity 0.6s ease;
+}
+#intro-screen.intro-lift {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+.intro-text {
+    position: relative;
+    font-size: clamp(2.4rem, 12vw, 7rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: #ffffff;
+    text-align: center;
+    user-select: none;
+    padding: 0 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.15em 0.35em;
+}
+/* Слова — обёртки, сохраняющие свою ширину при рассыпании */
+.intro-word {
+    display: inline-flex;
+    white-space: nowrap;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: wordIn 0.7s cubic-bezier(.22,1,.36,1) forwards;
+}
+.intro-word.ti { color: #ff3b3b; }
+.intro-word.rest { color: #ffffff; }
+@media (max-width: 640px) {
+    .intro-text {
+        flex-direction: column;
+        gap: 0.05em;
+    }
+    .intro-word {
+        font-size: clamp(2.6rem, 14vw, 4.5rem);
+    }
+}
+@keyframes wordIn {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+/* Кусочки букв */
+.intro-piece {
+    display: inline-block;
+    position: relative;
+    opacity: 1;
+    will-change: transform, opacity;
+}
+.intro-piece.falling {
+    animation: fallDown 1.3s cubic-bezier(.4,0,.8,1) forwards;
+}
+@keyframes fallDown {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    70% { opacity: 0.7; }
+    100% { transform: translateY(120vh) rotate(var(--rot, 25deg)); opacity: 0; }
+}
+
 @media (max-width: 640px) {
     .container { padding: 14px; }
-    .party-card { flex-direction: column; text-align: center; }
+    .party-card { flex-direction: column; text-align: center; padding-left: 16px; }
+    .party-card::before { width: 100%; height: 6px; bottom: auto; top: 0; }
     .party-stats { text-align: center; }
     .hud { grid-template-columns: repeat(2, 1fr); }
     .modal { padding: 20px 16px; }
@@ -678,7 +751,17 @@ h1 {
 }
 </style>
 </head>
-<body>
+<body class="intro-locked">
+
+<!-- ИНТРО-ЭКРАН -->
+<div id="intro-screen">
+    <div class="intro-text" id="intro-text">
+        <span class="intro-word ti" style="animation-delay:.15s">ты</span>
+        <span class="intro-word rest" style="animation-delay:.45s">сделал</span>
+        <span class="intro-word rest" style="animation-delay:.75s">свой</span>
+        <span class="intro-word rest" style="animation-delay:1.05s">выбор?</span>
+    </div>
+</div>
 
 <button class="theme-toggle" id="theme-toggle">☀️</button>
 
@@ -774,6 +857,90 @@ h1 {
 
 <script>
 /* ============================================
+   ИНТРО-АНИМАЦИЯ
+   Каждый символ оборачивается в span фиксированной
+   ширины (по факту рендера), чтобы рассыпание не
+   меняло раскладку и буквы не разъезжались.
+   ============================================ */
+(function() {
+    const intro = document.getElementById('intro-screen');
+    const introText = document.getElementById('intro-text');
+    if (!intro) return;
+
+    const fallDelay = 2300;
+    const liftDelay = 1400;
+
+    setTimeout(() => {
+        const words = Array.from(introText.querySelectorAll('.intro-word'));
+        const pieces = [];
+
+        words.forEach(word => {
+            const text = word.textContent;
+            const isTi = word.classList.contains('ti');
+
+            // Запоминаем исходный размер и стиль слова
+            const wordRect = word.getBoundingClientRect();
+            const computed = window.getComputedStyle(word);
+            const fontSize = computed.fontSize;
+            const fontWeight = computed.fontWeight;
+            const wordWidth = wordRect.width;
+
+            // Создаём контейнер, сохраняющий ширину исходного слова
+            const holder = document.createElement('span');
+            holder.className = 'intro-word-holder';
+            holder.style.display = 'inline-flex';
+            holder.style.whiteSpace = 'nowrap';
+            holder.style.width = wordWidth + 'px';
+            holder.style.justifyContent = 'center';
+            holder.style.position = 'relative';
+            holder.style.overflow = 'visible';
+
+            // Разбиваем на символы
+            const charSpans = [];
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                const piece = document.createElement('span');
+                piece.className = 'intro-piece';
+                piece.textContent = ch;
+                piece.style.display = 'inline-block';
+                piece.style.fontSize = fontSize;
+                piece.style.fontWeight = fontWeight;
+                piece.style.color = isTi ? '#ff3b3b' : '#ffffff';
+                piece.style.lineHeight = '1.1';
+                if (ch === ' ') {
+                    piece.style.width = '0.3em';
+                }
+                holder.appendChild(piece);
+                charSpans.push(piece);
+            }
+
+            // Заменяем оригинальное слово на контейнер
+            word.parentNode.replaceChild(holder, word);
+            pieces.push(...charSpans);
+        });
+
+        // Падение
+        setTimeout(() => {
+            pieces.forEach((piece, idx) => {
+                const rot = (Math.random() * 60 - 30) + 'deg';
+                const delay = idx * 0.028 + Math.random() * 0.1;
+                piece.style.setProperty('--rot', rot);
+                piece.style.animationDelay = delay + 's';
+                piece.classList.add('falling');
+            });
+
+            // Поднимаем чёрный экран
+            setTimeout(() => {
+                intro.classList.add('intro-lift');
+                document.body.classList.remove('intro-locked');
+                setTimeout(() => intro.remove(), 1200);
+            }, liftDelay);
+
+        }, 120);
+    }, fallDelay);
+})();
+
+/* ============================================
    ХЕЛПЕРЫ ДЛЯ ФОТО
    ============================================ */
 function getEventPhotoHtml(eventId) {
@@ -835,7 +1002,7 @@ const PARTIES = [
     },
     {
         id: 'kprf', name: 'КПРФ', leader: 'Г. Зюганов', style: 'Трибунная',
-        color: '#bb0504', colorDark: '#bb0504', colorBright: '#bb0504', colorSoft: '#bb0504',
+        color: '#bb0504', colorDark: '#7f0403', colorBright: '#fca5a5', colorSoft: '#2a0b0a',
         flag: 'КПРФ', base: 17, difficulty: 3,
         desc: 'Системная оппозиция. Сильна в промзонах и аграрных регионах.',
         traits: { trustStart: 30 },
@@ -855,7 +1022,7 @@ const PARTIES = [
     },
     {
         id: 'ldpr', name: 'ЛДПР', leader: 'Л. Слуцкий', style: 'Эпатажная',
-        color: '#004dab', colorDark: '#1e3a8a', colorBright: '#93c5fd', colorSoft: '#132a52',
+        color: '#004dab', colorDark: '#00306b', colorBright: '#93c5fd', colorSoft: '#0a1a33',
         flag: 'ЛДПР', base: 11, difficulty: 2,
         desc: 'Партия ярких жестов и медийных скандалов.',
         traits: { trustStart: 28 },
@@ -875,7 +1042,7 @@ const PARTIES = [
     },
     {
         id: 'sr', name: 'Справедливая Россия', leader: 'С. Миронов', style: 'Социальная',
-        color: '#f59e0b', colorDark: '#78350f', colorBright: '#fcd34d', colorSoft: '#2a1f0a',
+        color: '#f59e0b', colorDark: '#925c05', colorBright: '#fcd34d', colorSoft: '#2a1f0a',
         flag: 'СР', base: 8, difficulty: 3,
         desc: 'Социалка, бюджетники, пенсионеры.',
         traits: { trustStart: 30 },
@@ -895,7 +1062,7 @@ const PARTIES = [
     },
     {
         id: 'nl', name: 'Новые люди', leader: 'А. Нечаев', style: 'Молодёжная',
-        color: '#10b981', colorDark: '#064e3b', colorBright: '#6ee7b7', colorSoft: '#0d2b24',
+        color: '#10b981', colorDark: '#065f46', colorBright: '#6ee7b7', colorSoft: '#0d2b24',
         flag: 'НЛ', base: 8, difficulty: 2,
         desc: 'Партия молодых. Digital-кампания.',
         traits: { trustStart: 30 },
@@ -915,7 +1082,7 @@ const PARTIES = [
     },
     {
         id: 'pens', name: 'Партия пенсионеров', leader: 'Э. Праздников', style: 'Стабильная',
-        color: '#a855f7', colorDark: '#4c1d95', colorBright: '#d8b4fe', colorSoft: '#241640',
+        color: '#a855f7', colorDark: '#5b21b6', colorBright: '#d8b4fe', colorSoft: '#241640',
         flag: 'ПП', base: 4, difficulty: 4,
         desc: 'Одна тема — пенсии.',
         traits: { trustStart: 38 },
@@ -935,7 +1102,7 @@ const PARTIES = [
     },
     {
         id: 'kr', name: 'Коммунисты России', leader: 'С. Малинкович', style: 'Спойлерская',
-        color: '#dc2626', colorDark: '#7f1d1d', colorBright: '#fca5a5', colorSoft: '#2a1313',
+        color: '#dc2626', colorDark: '#991b1b', colorBright: '#fca5a5', colorSoft: '#2a1313',
         flag: 'КР', base: 3, difficulty: 5,
         desc: 'Спойлер КПРФ. Ресурсов нет — есть идея.',
         traits: { trustStart: 25 },
@@ -955,7 +1122,7 @@ const PARTIES = [
     },
     {
         id: 'yabloko', name: 'Яблоко', leader: 'Н. Рыбаков', style: 'Либеральная',
-        color: '#22c55e', colorDark: '#064e3b', colorBright: '#86efac', colorSoft: '#0d2b1c',
+        color: '#22c55e', colorDark: '#166534', colorBright: '#86efac', colorSoft: '#0d2b1c',
         flag: 'ЯБ', base: 5, difficulty: 4,
         desc: 'Либеральная оппозиция. Риск снятия при высокой поддержке.',
         traits: { trustStart: 30 },
@@ -1047,7 +1214,6 @@ function applyPartyTheme(party) {
     root.style.setProperty('--accent', party.color);
     root.style.setProperty('--accent-2', party.colorBright);
     root.style.setProperty('--accent-soft', party.colorSoft);
-    root.style.setProperty('--border-strong', party.color);
     root.style.setProperty('--grad', `linear-gradient(135deg, ${party.color}, ${party.colorBright})`);
 }
 
@@ -1060,6 +1226,7 @@ function renderParties() {
     PARTIES.forEach(p => {
         const card = document.createElement('div');
         card.className = 'party-card';
+        card.style.setProperty('--party-color', p.color);
         card.innerHTML = `
             <div class="party-flag" style="background:linear-gradient(135deg,${p.colorDark},${p.color})">${getPartyPhotoHtml(p)}</div>
             <div class="party-info">
