@@ -639,7 +639,6 @@ h1 {
     pointer-events: none;
     animation: flyUp 1.2s ease-out forwards;
 }
-/* Длинные тексты: сохранение переносов строк */
 .brief-body,
 .modal-body,
 .advisor-desc,
@@ -647,12 +646,10 @@ h1 {
 .party-info-desc {
     white-space: pre-line;
 }
-
 .brief-body p {
     margin-bottom: 14px;
     line-height: 1.75;
 }
-
 .brief-body p:last-child {
     margin-bottom: 0;
 }
@@ -767,16 +764,21 @@ h1 {
     </div>
 </div>
 
+<!-- photos.js подключается ДО основного скрипта,
+     чтобы объекты с фото были уже заполнены -->
+<script src="photos.js"></script>
+
 <script>
 /* ============================================
-   ФОТО (пустые — заполняются в photos.js)
+   ХЕЛПЕРЫ ДЛЯ ФОТО
+   ============================================
+   Сами объекты advisorPhotos, eventPhotos, partyPhotos
+   объявлены в photos.js и заполняются там же.
+   Здесь только функции-обёртки.
    ============================================ */
-const advisorPhotos = {};
-const eventPhotos = {};
-const partyPhotos = {};
 
 function getEventPhotoHtml(eventId) {
-    const photo = eventPhotos[eventId] || eventPhotos['default'];
+    const photo = (typeof eventPhotos !== 'undefined' && (eventPhotos[eventId] || eventPhotos['default'])) || null;
     if (photo) {
         return `<div class="event-photo"><img src="${photo}" alt="Событие" onerror="this.parentNode.innerHTML='<div class=\\'event-photo-placeholder\\'>📰</div>'"></div>`;
     }
@@ -784,7 +786,7 @@ function getEventPhotoHtml(eventId) {
 }
 
 function getAdvisorPhotoHtml(advisor) {
-    const photo = advisorPhotos[advisor.id];
+    const photo = (typeof advisorPhotos !== 'undefined') ? advisorPhotos[advisor.id] : null;
     const initial = advisor.name.charAt(0);
     if (photo) {
         return `<img src="${photo}" alt="${advisor.name}" onerror="this.parentNode.innerHTML='${initial}'">`;
@@ -793,7 +795,7 @@ function getAdvisorPhotoHtml(advisor) {
 }
 
 function getPartyPhotoHtml(party) {
-    const photo = partyPhotos[party.id];
+    const photo = (typeof partyPhotos !== 'undefined') ? partyPhotos[party.id] : null;
     if (photo) {
         return `<img src="${photo}" alt="${party.name}" onerror="this.parentNode.innerHTML='${party.flag}'">`;
     }
@@ -1509,7 +1511,6 @@ function getAvailableOrders() {
         }
     });
     // Игрок за ЕР НЕ получает бесплатный приказ на фальсификацию.
-    // Все очки — только через нанятых советников и их приказы.
     return available;
 }
 
@@ -3244,7 +3245,5 @@ themeBtn.addEventListener('click', () => {
 renderParties();
 setTab('regions');
 </script>
-
-<script src="photos.js"></script>
 </body>
 </html>
