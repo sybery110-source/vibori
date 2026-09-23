@@ -95,7 +95,6 @@ h1 {
     color: var(--text); text-align: center;
     margin-bottom: 18px; font-size: 1.5rem; font-weight: 800;
 }
-/* Карточка партии — изюминка: цветная левая полоса + цветной флаг */
 .party-card {
     position: relative;
     background: var(--card);
@@ -695,7 +694,6 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
     align-items: center;
     gap: 0.15em 0.35em;
 }
-/* Слова — обёртки, сохраняющие свою ширину при рассыпании */
 .intro-word {
     display: inline-flex;
     white-space: nowrap;
@@ -719,7 +717,6 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
     0% { opacity: 0; transform: translateY(30px); }
     100% { opacity: 1; transform: translateY(0); }
 }
-/* Кусочки букв */
 .intro-piece {
     display: inline-block;
     position: relative;
@@ -753,7 +750,6 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
 </head>
 <body class="intro-locked">
 
-<!-- ИНТРО-ЭКРАН -->
 <div id="intro-screen">
     <div class="intro-text" id="intro-text">
         <span class="intro-word ti" style="animation-delay:.15s">ты</span>
@@ -858,9 +854,6 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
 <script>
 /* ============================================
    ИНТРО-АНИМАЦИЯ
-   Каждый символ оборачивается в span фиксированной
-   ширины (по факту рендера), чтобы рассыпание не
-   меняло раскладку и буквы не разъезжались.
    ============================================ */
 (function() {
     const intro = document.getElementById('intro-screen');
@@ -878,14 +871,12 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
             const text = word.textContent;
             const isTi = word.classList.contains('ti');
 
-            // Запоминаем исходный размер и стиль слова
             const wordRect = word.getBoundingClientRect();
             const computed = window.getComputedStyle(word);
             const fontSize = computed.fontSize;
             const fontWeight = computed.fontWeight;
             const wordWidth = wordRect.width;
 
-            // Создаём контейнер, сохраняющий ширину исходного слова
             const holder = document.createElement('span');
             holder.className = 'intro-word-holder';
             holder.style.display = 'inline-flex';
@@ -895,7 +886,6 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
             holder.style.position = 'relative';
             holder.style.overflow = 'visible';
 
-            // Разбиваем на символы
             const charSpans = [];
             for (let i = 0; i < text.length; i++) {
                 const ch = text[i];
@@ -914,12 +904,10 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
                 charSpans.push(piece);
             }
 
-            // Заменяем оригинальное слово на контейнер
             word.parentNode.replaceChild(holder, word);
             pieces.push(...charSpans);
         });
 
-        // Падение
         setTimeout(() => {
             pieces.forEach((piece, idx) => {
                 const rot = (Math.random() * 60 - 30) + 'deg';
@@ -929,7 +917,6 @@ body.light-theme .modal-overlay { background: rgba(200,215,235,.85); }
                 piece.classList.add('falling');
             });
 
-            // Поднимаем чёрный экран
             setTimeout(() => {
                 intro.classList.add('intro-lift');
                 document.body.classList.remove('intro-locked');
@@ -1540,8 +1527,13 @@ const ADVISOR_ORDERS = {
             state.trust = clamp(state.trust - 4, -50, 100);
             state.bondarenkoActions++;
             const result = { regions: ['Западная Россия', 'Центральная Россия'], regionBoost: +6, trust: -4 };
-            if (state.bondarenkoActions >= 3 && !state.bondarenkoRemoved) {
-                triggerBondarenkoRemoval();
+            // После 5 использований — с шансом 70% отстраняют Бондаренко
+            if (state.bondarenkoActions >= 5 && !state.bondarenkoRemoved) {
+                if (Math.random() < 0.7) {
+                    setTimeout(() => triggerBondarenkoRemoval(), 400);
+                } else {
+                    addLog('ЦИК не стал снимать Бондаренко — повезло.', 'news');
+                }
             }
             return result;
         }
@@ -2228,8 +2220,160 @@ function startDebate() {
     });
 }
 
+/* ============================================
+   ОТСТРАНЕНИЕ БОНДАРЕНКО (после 5 акций, шанс 70%)
+   ============================================ */
 function triggerBondarenkoRemoval() {
     state.bondarenkoRemoved = true;
+    const canPay = state.money >= 200_000;
+
+    const answers = [];
+
+    if (canPay) {
+        answers.push({
+            letter: 'A',
+            label: '💸 Откупиться за 200 000 ₽',
+            effect: '−200к, Бондаренко остаётся в кампании',
+            variant: 'success',
+            action: () => {
+                state.money -= 200_000;
+                state.bondarenkoRemoved = false;
+                // Возвращаем советника в штаб
+                state.advisors.forEach(a => {
+                    if (a.id === 'kprf_1') a.removed = false;
+                });
+                addLog('Откупились: Бондаренко остался в кампании (−200к)', 'good');
+                renderAll();
+                showModal({
+                    type: 'success',
+                    eyebrow: 'Результат',
+                    title: 'Бондаренко остался',
+                    body: `
+                        <p>Вы заплатили 200 000 ₽ — Бондаренко сохранил регистрацию и продолжает кампанию.</p>
+                        <div class="effect-block">
+                            <h4>Результат</h4>
+                            <div class="effect-row"><span>Фонд</span><span class="neg">−200 000 ₽</span></div>
+                            <div class="effect-row"><span>Советник</span><span class="pos">В строю</span></div>
+                        </div>
+                    `,
+                    answers: [{ letter: '✓', label: 'Отлично', variant: 'success', action: () => {} }]
+                });
+            }
+        });
+    } else {
+        answers.push({
+            letter: 'A',
+            label: '💸 Откупиться за 200 000 ₽',
+            effect: 'Не хватает денег',
+            variant: 'danger',
+            action: () => {
+                showModal({
+                    type: 'scandal',
+                    eyebrow: 'Результат',
+                    title: 'Денег не хватило',
+                    body: `
+                        <p>На откуп не хватило денег. Бондаренко снимают.</p>
+                        <div class="effect-block">
+                            <h4>Результат</h4>
+                            <div class="effect-row"><span>Советник</span><span class="neg">Снят с выборов</span></div>
+                        </div>
+                    `,
+                    answers: [{ letter: '✓', label: 'Понятно', variant: 'danger', action: () => {} }]
+                });
+                markBondarenkoRemoved();
+                renderAll();
+            }
+        });
+    }
+
+    answers.push({
+        letter: 'B',
+        label: '⚖️ Подать кассацию',
+        effect: '−150 000 ₽, шанс вернуть 20%',
+        variant: 'danger',
+        action: () => {
+            if (state.money >= 150_000) {
+                state.money -= 150_000;
+                if (Math.random() < 0.2) {
+                    state.advisors.forEach(a => { if (a.id === 'kprf_1') a.removed = false; });
+                    state.bondarenkoRemoved = false;
+                    addLog('Бондаренко восстановлен через суд!', 'good');
+                    showModal({
+                        type: 'success',
+                        eyebrow: 'Результат',
+                        title: 'Восстановлен!',
+                        body: `
+                            <p>Суд принял кассацию Бондаренко.</p>
+                            <div class="effect-block">
+                                <h4>Результат</h4>
+                                <div class="effect-row"><span>Советник</span><span class="pos">Восстановлен</span></div>
+                                <div class="effect-row"><span>Фонд</span><span class="neg">−150 000 ₽</span></div>
+                            </div>
+                        `,
+                        answers: [{ letter: '✓', label: 'Отлично', variant: 'success', action: () => {} }]
+                    });
+                } else {
+                    addLog('Суд оставил решение в силе.', 'bad');
+                    showModal({
+                        type: 'scandal',
+                        eyebrow: 'Результат',
+                        title: 'Кассация отклонена',
+                        body: `
+                            <p>Суд оставил решение ЦИК в силе.</p>
+                            <div class="effect-block">
+                                <h4>Результат</h4>
+                                <div class="effect-row"><span>Советник</span><span class="neg">Снят</span></div>
+                                <div class="effect-row"><span>Фонд</span><span class="neg">−150 000 ₽</span></div>
+                            </div>
+                        `,
+                        answers: [{ letter: '✓', label: 'Понятно', variant: 'danger', action: () => {} }]
+                    });
+                }
+            } else {
+                showModal({
+                    type: 'scandal',
+                    eyebrow: 'Результат',
+                    title: 'Не хватило денег',
+                    body: `
+                        <p>На кассацию не хватило денег.</p>
+                        <div class="effect-block">
+                            <h4>Результат</h4>
+                            <div class="effect-row"><span>Советник</span><span class="neg">Снят</span></div>
+                        </div>
+                    `,
+                    answers: [{ letter: '✓', label: 'Понятно', variant: 'danger', action: () => {} }]
+                });
+            }
+            markBondarenkoRemoved();
+            renderAll();
+        }
+    });
+
+    answers.push({
+        letter: 'C',
+        label: '🤐 Принять',
+        effect: 'Советник снят навсегда',
+        variant: 'danger',
+        action: () => {
+            addLog('Бондаренко снят.', 'bad');
+            markBondarenkoRemoved();
+            renderAll();
+            showModal({
+                type: 'scandal',
+                eyebrow: 'Результат',
+                title: 'Советник потерян',
+                body: `
+                    <p>Бондаренко окончательно снят с выборов.</p>
+                    <div class="effect-block">
+                        <h4>Результат</h4>
+                        <div class="effect-row"><span>Советник</span><span class="neg">Снят</span></div>
+                    </div>
+                `,
+                answers: [{ letter: '✓', label: 'Понятно', variant: 'danger', action: () => {} }]
+            });
+        }
+    });
+
     showModal({
         type: 'scandal',
         eyebrow: 'ЦИК · Срочно',
@@ -2237,124 +2381,14 @@ function triggerBondarenkoRemoval() {
         eventId: 'bondarenko_removal',
         body: `
             <p>ЦИК <strong>аннулировал регистрацию</strong> Николая Бондаренко.</p>
-            <p>Основание: <em>штраф по ст. 20.3 КоАП</em>.</p>
+            <p>Основание: <em>штраф по ст. 20.3 КоАП</em> — вирусная агитация была слишком радикальной.</p>
             <div class="citation">«Снимать с дистанции известного коммуниста — значит наплевать на миллионы граждан» — Д. Новиков</div>
-        `,
-        answers: [
-            {
-                letter: 'A', label: '⚖️ Подать кассацию',
-                effect: '−150 000 ₽, шанс вернуть 20%',
-                variant: 'danger',
-                action: () => {
-                    if (state.money >= 150_000) {
-                        state.money -= 150_000;
-                        if (Math.random() < 0.2) {
-                            state.advisors.forEach(a => { if (a.id === 'kprf_1') a.removed = false; });
-                            state.bondarenkoRemoved = false;
-                            addLog('Бондаренко восстановлен!', 'good');
-                            showModal({
-                                type: 'success',
-                                eyebrow: 'Результат',
-                                title: 'Восстановлен!',
-                                body: `
-                                    <p>Суд принял кассацию Бондаренко.</p>
-                                    <div class="effect-block">
-                                        <h4>Результат</h4>
-                                        <div class="effect-row"><span>Советник</span><span class="pos">Восстановлен</span></div>
-                                        <div class="effect-row"><span>Фонд</span><span class="neg">−150 000 ₽</span></div>
-                                    </div>
-                                `,
-                                answers: [{ letter: '✓', label: 'Отлично', variant: 'success', action: () => {} }]
-                            });
-                        } else {
-                            addLog('Суд оставил решение в силе.', 'bad');
-                            showModal({
-                                type: 'scandal',
-                                eyebrow: 'Результат',
-                                title: 'Кассация отклонена',
-                                body: `
-                                    <p>Суд оставил решение ЦИК в силе.</p>
-                                    <div class="effect-block">
-                                        <h4>Результат</h4>
-                                        <div class="effect-row"><span>Советник</span><span class="neg">Остаётся снят</span></div>
-                                        <div class="effect-row"><span>Фонд</span><span class="neg">−150 000 ₽</span></div>
-                                    </div>
-                                `,
-                                answers: [{ letter: '✓', label: 'Понятно', variant: 'danger', action: () => {} }]
-                            });
-                        }
-                    } else {
-                        showModal({
-                            type: 'scandal',
-                            eyebrow: 'Результат',
-                            title: 'Не хватило денег',
-                            body: `
-                                <p>На кассацию не хватило денег.</p>
-                                <div class="effect-block">
-                                    <h4>Результат</h4>
-                                    <div class="effect-row"><span>Советник</span><span class="neg">Остаётся снят</span></div>
-                                </div>
-                            `,
-                            answers: [{ letter: '✓', label: 'Понятно', variant: 'danger', action: () => {} }]
-                        });
-                    }
-                    markBondarenkoRemoved();
-                    renderAll();
-                }
-            },
-            {
-                letter: 'B', label: '📰 Выступить в СМИ',
-                effect: '−4% доверия, +2% в 3 регионах',
-                action: () => {
-                    state.trust = clamp(state.trust - 4, -50, 100);
-                    const codes = [...MACRO_REGIONS].sort(() => Math.random() - 0.5).slice(0, 3);
-                    codes.forEach(r => {
-                        state.regions[r.code].myRating = clamp(state.regions[r.code].myRating + 2, 0, 100);
-                        normalizeRegion(r.code);
-                    });
-                    addLog('Публично осудили снятие Бондаренко', 'neutral');
-                    markBondarenkoRemoved();
-                    renderAll();
-                    showModal({
-                        type: 'news',
-                        eyebrow: 'Результат',
-                        title: 'Выступление в СМИ',
-                        body: `
-                            <p>Вы публично осудили снятие Бондаренко.</p>
-                            <div class="effect-block">
-                                <h4>Результат</h4>
-                                <div class="effect-row"><span>Доверие</span><span class="neg">−4%</span></div>
-                                <div class="effect-row"><span>Регионы (3)</span><span class="pos">+2%</span></div>
-                            </div>
-                        `,
-                        answers: [{ letter: '✓', label: 'Понятно', action: () => {} }]
-                    });
-                }
-            },
-            {
-                letter: 'C', label: '🤐 Принять',
-                effect: 'Советник снят навсегда',
-                variant: 'danger',
-                action: () => {
-                    addLog('Бондаренко снят.', 'bad');
-                    markBondarenkoRemoved();
-                    renderAll();
-                    showModal({
-                        type: 'scandal',
-                        eyebrow: 'Результат',
-                        title: 'Советник потерян',
-                        body: `
-                            <p>Бондаренко окончательно снят с выборов.</p>
-                            <div class="effect-block">
-                                <h4>Результат</h4>
-                                <div class="effect-row"><span>Советник</span><span class="neg">Снят</span></div>
-                            </div>
-                        `,
-                        answers: [{ letter: '✓', label: 'Понятно', variant: 'danger', action: () => {} }]
-                    });
-                }
+            ${canPay
+                ? `<p style="color:var(--green);margin-top:10px">💡 У вас есть <strong>200 000 ₽</strong> — можно откупиться и сохранить советника.</p>`
+                : `<p style="color:var(--red);margin-top:10px">💡 Для откупа нужно 200 000 ₽, у вас только ${state.money.toLocaleString('ru-RU')} ₽.</p>`
             }
-        ]
+        `,
+        answers
     });
 }
 
@@ -3008,11 +3042,6 @@ function rollDayEvent() {
     if (Math.random() > 0.35) return;
     if (state.lastEventDay === state.day) return;
     state.lastEventDay = state.day;
-
-    if (state.bondarenkoActions >= 3 && !state.bondarenkoRemoved && state.party.id === 'kprf') {
-        triggerBondarenkoRemoval();
-        return;
-    }
 
     if (state.day === state.nextSueDay && !state.suedToday) {
         state.suedToday = true;
