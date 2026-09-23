@@ -1508,17 +1508,8 @@ function getAvailableOrders() {
             available.push(ADVISOR_ORDERS[adv.unlock]);
         }
     });
-    if (state.party.id === 'er' && !state.advisors.some(a => a.unlock === 'fraud_zhkh' || a.unlock === 'fraud_cik')) {
-        available.push({
-            id: 'fraud_basic', name: 'Договориться с участком', icon: '🗳️',
-            money: 50_000, ap: 1, desc: '+5 очков фальсификации, −2% доверия.', cd: 0,
-            run: () => {
-                state.fraudPoints += 5;
-                state.trust = clamp(state.trust - 2, -50, 100);
-                return { fraud: +5, trust: -2 };
-            }
-        });
-    }
+    // Игрок за ЕР НЕ получает бесплатный приказ на фальсификацию.
+    // Все очки — только через нанятых советников и их приказы.
     return available;
 }
 
@@ -1774,7 +1765,6 @@ function renderKompromat() {
 }
 
 function openSuePicker(onConfirm) {
-    // Исключаем свою партию из целей
     const targets = state.opponents.filter(o => o.id !== state.party.id);
     if (!targets.length) return;
 
@@ -1798,7 +1788,6 @@ function openSuePicker(onConfirm) {
                 variant: 'danger',
                 action: () => {
                     if (!selectedId) return;
-                    // Защита: нельзя подать иск на самого себя
                     if (selectedId === state.party.id) return;
                     const target = targets.find(o => o.id === selectedId);
                     if (!target) return;
@@ -1848,7 +1837,6 @@ function openSuePicker(onConfirm) {
 }
 
 function triggerSueAgainstPlayer() {
-    // Защита: иск может подать только другая партия, не сама на себя
     const possibleSuers = state.opponents.filter(o => o.id !== state.party.id);
     if (!possibleSuers.length) return;
 
@@ -2987,11 +2975,13 @@ function startCounting() {
 
     let myFinal = finalResults.reduce((sum, fr) => sum + fr.realMe * fr.region.weight, 0) / totalWeight;
 
+    // ===== ИЗМЕНЕНИЕ: НПС ЕР получает строго +10..15 п.п., без других баффов =====
     if (oppReal['er'] !== undefined) {
         const erFraudBonus = rand(10, 15);
         oppReal['er'] += erFraudBonus * totalWeight;
     }
 
+    // ===== ИЗМЕНЕНИЕ: игрок за ЕР получает только заработанные очки =====
     let fraudBonus = 0;
     if (state.party.id === 'er' && state.fraudPoints > 0) {
         fraudBonus = state.fraudPoints * 0.8;
