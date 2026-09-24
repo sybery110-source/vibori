@@ -30,7 +30,7 @@ window.partyPhotos = {
 window.advisorPhotos = {
     /* --- Единая Россия --- */
     // 'er_1': 'photos/turchak.jpg',       // Андрей Турчак
-    'er_2': 'photos/lavrov.png',        // Сергей Лавров
+    'er_2': 'logos/lavrov.png',        // Сергей Лавров
     // 'er_3': 'photos/golovin.jpg',       // Владислав Головин
 
     /* --- КПРФ --- */
